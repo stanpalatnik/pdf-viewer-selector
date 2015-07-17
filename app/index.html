@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/normalize.css">
   <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/main.css">
   <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="basscss.css">
   <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
 </head>
 <body ng-app="myApp">
@@ -23,38 +24,16 @@
   <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
-
-  <div class="container" ng-controller="AppCtrl">
-    <div class="clearfix">
-
-      <header class="p2 bright-blue bg-blue">
-        <div class="container sm-table">
-          <div class="sm-table-cell py4">
-            <h1 class="h0 mt0 mb0 white inline">AngularJS PDF Viewer</h1>
-            <a class="h0 button dark-gray" href="//github.com/winkerVSbecks/angular-pdf-viewer">github</a>
-          </div>
-        </div>
-      </header>
-
-      <pdf-viewer
-              delegate-handle="my-pdf-container"
-              url="pdfUrl"
-              scale="1"
-              show-toolbar="true"
-              headers="{'x-you-know-whats-awesome': 'EVERYTHING'}"></pdf-viewer>
-
-      <div id="selector-box" style="border: 1px dotted #000; position: absolute;" hidden></div>
-      </div>
-    </div>
-
   <!-- In production use:
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
   -->
+  <ng-view></ng-view>
 
   <script src="bower_components/pdfjs-dist/build/pdf.js"></script>
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-route/angular-route.js"></script>
-  <script src="bower_components/angular-pdf-viewer/dist/angular-pdf-viewer.min.js"></script>
+  <script src="components/angular-pdf-viewer/angular-pdf-viewer.min.js"></script>
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="app.js"></script>
   <script src="view1/view1.js"></script>
   <script src="view2/view2.js"></script>

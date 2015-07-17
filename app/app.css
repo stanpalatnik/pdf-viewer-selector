@@ -28,3 +28,8 @@
   content: "";
   padding: 0;
 }
+
+#selector-box {
+  border: 1px dotted #000;
+  position: absolute;
+}
