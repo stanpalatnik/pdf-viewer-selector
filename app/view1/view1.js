@@ -14,7 +14,8 @@ angular.module('myApp.view1', ['ngRoute'])
 'pdfDelegate',
 '$timeout',
 function($scope, pdfDelegate, $timeout) {
-  $scope.pdfUrl = '/app/pdf/material-design.pdf';
+  $scope.pdfUrl = '/app/pdf/contribution_card_cc_eng.pdf';
+  $scope.selectionArr = [];
 
   $scope.loadNewFile = function(url) {
     pdfDelegate
@@ -26,7 +27,6 @@ function($scope, pdfDelegate, $timeout) {
     canvasContext.strokeStyle="#e7003a";
     canvasContext.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
   }}])
-
 .directive('canvasSelector', function factory() {
   return {
     restrict: 'E',
@@ -58,6 +58,7 @@ function($scope, pdfDelegate, $timeout) {
         scope.canvasRect.w = (e.pageX - offset.left) - scope.canvasRect.startX;
         scope.canvasRect.h = (e.pageY - offset.top) - scope.canvasRect.startY;
         draw();
+        console.log(scope.canvasRect);
         resetSelector();
       }
 

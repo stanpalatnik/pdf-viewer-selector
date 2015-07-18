@@ -1,14 +1,6 @@
 <div class="container" ng-controller="View1Ctrl">
     <div class="clearfix">
 
-        <header class="p2 bright-blue bg-blue">
-            <div class="container sm-table">
-                <div class="sm-table-cell py4">
-                    <h1 class="h0 mt0 mb0 white inline">AngularJS PDF Viewer</h1>
-                </div>
-            </div>
-        </header>
-
         <pdf-viewer
                 delegate-handle="my-pdf-container"
                 url="pdfUrl"
@@ -28,6 +20,10 @@
                            class="button button-narrow button-nav-light">
                             Load the Material Design PDF
                         </a>
+                        <a ng-click="loadNewFile('/app/pdf/contribution_card_cc_eng.pdf')"
+                           class="button button-narrow button-nav-light">
+                            Load the Contribution card PDF
+                        </a>
                     </div>
                 </div>
             </div>
@@ -35,3 +31,6 @@
         <canvas-selector canvas-elem="'#pdfCanvas'"></canvas-selector>
     </div>
 </div>
+<script type="text/javascript">
+
+</script>
