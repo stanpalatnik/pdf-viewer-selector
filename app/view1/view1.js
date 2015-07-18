@@ -35,32 +35,35 @@ function($scope, pdfDelegate, $timeout) {
     scope: {
       canvasElem: '='
     },
-    link      : function (scope, element, attrs) {
+    link: function (scope, element, attrs) {
       scope.canvasRect = {};
       scope.selectRect = {};
+      scope.isDragging = false;
 
       angular.element(document).ready(function () {
         scope.canvas = $(scope.canvasElem);
         scope.canvasContext = scope.canvas[0].getContext('2d');
-        scope.canvas.on( "mousedown",  mouseDown);
+        scope.canvas.on('mousedown', mouseDown);
         scope.canvas.on('mouseup', mouseUp);
         scope.canvas.on('mousemove', mouseMove);
-        scope.selectorBox = document.getElementById('selector-box');
-        scope.selectorBox.addEventListener('mouseup', mouseUp, false);
+        scope.selectorBox = $("#selector-box");
+        scope.selectorBox.on('mouseup', mouseUp);
       });
 
 
       function mouseUp(e) {
-        scope.selectorBox.hidden = 1;
+        scope.isDragging = false;
+        scope.selectorBox.hide();
         var offset = scope.canvas.offset();
         scope.canvasRect.w = (e.pageX - offset.left) - scope.canvasRect.startX;
-        scope.canvasRect.h = (e.pageY - offset.top) - scope.canvasRect.startY ;
+        scope.canvasRect.h = (e.pageY - offset.top) - scope.canvasRect.startY;
         draw();
+        resetSelector();
       }
 
       function mouseDown(e) {
-        scope.selectorBox.hidden = 0;
-
+        scope.isDragging = true;
+        scope.selectorBox.show();
         scope.canvasRect.startX = e.pageX - this.offsetLeft;
         scope.canvasRect.startY = e.pageY - this.offsetTop;
         scope.selectRect.x1 = e.pageX;
@@ -69,25 +72,32 @@ function($scope, pdfDelegate, $timeout) {
       }
 
       function mouseMove(e) {
-        scope.selectRect.x2 = e.pageX;
-        scope.selectRect.y2 = e.pageY;
-        reCalc();
+        if (scope.isDragging) {
+          scope.selectRect.x2 = e.pageX;
+          scope.selectRect.y2 = e.pageY;
+          reCalc();
+        }
       }
 
       function draw() {
-        scope.canvasContext.strokeStyle="#e7003a";
+        scope.canvasContext.strokeStyle = "#e7003a";
         scope.canvasContext.strokeRect(scope.canvasRect.startX, scope.canvasRect.startY, scope.canvasRect.w, scope.canvasRect.h);
       }
 
       function reCalc() {
-        var x3 = Math.min(scope.selectRect.x1,scope.selectRect.x2);
-        var x4 = Math.max(scope.selectRect.x1,scope.selectRect.x2);
-        var y3 = Math.min(scope.selectRect.y1,scope.selectRect.y2);
-        var y4 = Math.max(scope.selectRect.y1,scope.selectRect.y2);
-        scope.selectorBox.style.left = x3 + 'px';
-        scope.selectorBox.style.top = y3 + 'px';
-        scope.selectorBox.style.width = x4 - x3 + 'px';
-        scope.selectorBox.style.height = y4 - y3 + 'px';
+        var x3 = Math.min(scope.selectRect.x1, scope.selectRect.x2);
+        var x4 = Math.max(scope.selectRect.x1, scope.selectRect.x2);
+        var y3 = Math.min(scope.selectRect.y1, scope.selectRect.y2);
+        var y4 = Math.max(scope.selectRect.y1, scope.selectRect.y2);
+        scope.selectorBox.css('left', x3 + 'px');
+        scope.selectorBox.css('top', y3 + 'px');
+        scope.selectorBox.css('width', x4 - x3 + 'px');
+        scope.selectorBox.css('height', y4 - y3 + 'px');
+      }
+
+      function resetSelector() {
+        scope.canvasRect = {};
+        scope.selectRect = {};
       }
     }
   };
