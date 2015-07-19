@@ -26,12 +26,14 @@ function($scope, pdfDelegate, $timeout) {
     pdfDelegate
         .$getByHandle('my-pdf-container')
         .load(url);
-  };
+  };;
 
   $scope.draw = function() {
     $scope.canvasContext.strokeStyle="#e7003a";
     $scope.canvasContext.strokeRect($scope.canvasRect.startX, $scope.canvasRect.startY, $scope.canvasRect.w, $scope.canvasRect.h);
-    console.log($scope.canvasRect);
+    $scope.scale = pdfDelegate .$getByHandle('my-pdf-container').getCurrentScale();
+    console.log("Current scale is: " + $scope.scale);
+    console.log("Current selection: " + $scope.canvasRect);
   };
 
   $scope.mouseUp = function ($event) {
