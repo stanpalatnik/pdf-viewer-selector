@@ -32,5 +32,13 @@
     </div>
 </div>
 <script type="text/javascript">
-
+    $( document ).ready(function() {
+        var canvas = $("#pdfCanvas");
+        alert(canvas);
+        alert(mouseDown)
+        canvas.on('mousedown', function(e) {
+            alert('f');
+        });
+        canvas.on('mouseup', mouseUp);
+    });
 </script>
