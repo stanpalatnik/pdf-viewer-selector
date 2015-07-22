@@ -380,7 +380,7 @@ angular.module('pdf')
             return {
                 restrict: 'E',
                 template: '<pdf-viewer-toolbar ng-if="showToolbar" delegate-handle="{{id}}" page-count="pageCount"></pdf-viewer-toolbar>' +
-                '<canvas id="pdfCanvas" ng-controller="View1Ctrl" ng-mousedown="mouseDown($event)" ng-mouseup="mouseUp($event)"></canvas>',
+                '<canvas id="pdfCanvas" ng-controller="View1Ctrl" ng-mousedown="mouseDown($event)" ng-mouseup="mouseUp($event)" ng-mousemove="mouseMove($event)"></canvas>',
                 scope: true,
                 controller: 'PdfCtrl',
                 link: function(scope, element, attrs) {

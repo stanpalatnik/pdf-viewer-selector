@@ -17,8 +17,8 @@ function($scope, pdfDelegate, $timeout) {
   var divMouseUpOffset = 2;
   $scope.pdfUrl = '/app/pdf/contribution_card_cc_eng.pdf';
   $scope.canvas = $("#pdfCanvas");
+  $scope.selector = $("#selector-box");
   $scope.canvasContext = $scope.canvas[0].getContext('2d');
-  $scope.canvasRect = {};
   $scope.isDragging = false;
   $scope.selectionArr = [];
 
@@ -26,30 +26,50 @@ function($scope, pdfDelegate, $timeout) {
     pdfDelegate
         .$getByHandle('my-pdf-container')
         .load(url);
-  };;
-
-  $scope.draw = function() {
-    $scope.canvasContext.strokeStyle="#e7003a";
-    $scope.canvasContext.strokeRect($scope.canvasRect.startX, $scope.canvasRect.startY, $scope.canvasRect.w, $scope.canvasRect.h);
-    $scope.scale = pdfDelegate .$getByHandle('my-pdf-container').getCurrentScale();
-    console.log("Current scale is: " + $scope.scale);
-    console.log("Current selection: " + $scope.canvasRect);
   };
 
+  function draw(canvasRect) {
+    $scope.canvasContext.strokeStyle="#e7003a";
+    $scope.canvasContext.strokeRect(canvasRect.startX, canvasRect.startY, canvasRect.w, canvasRect.h);
+    console.log("Current selection: " + canvasRect);
+  }
+
   $scope.mouseUp = function ($event) {
-    $("#selector-box").trigger('mouseup');
+    $scope.isDragging = false;
     var offset = this.canvas.offset();
-    $scope.canvasRect.w = ($event.pageX - offset.left) - $scope.canvasRect.startX - divMouseUpOffset;
-    $scope.canvasRect.h = ($event.pageY - offset.top) - $scope.canvasRect.startY;
-    $scope.draw();
-    $scope.selectionArr.push($scope.canvasRect);
-    $scope.canvasRect = {};
+    var canvasRect = {};
+    var scale = pdfDelegate.$getByHandle('my-pdf-container').getCurrentScale();
+    canvasRect.startX = parseInt($scope.selector.css('left'), 10) - offset.left;
+    canvasRect.startY = parseInt($scope.selector.css('top'), 10) - offset.top;
+    canvasRect.w = parseInt($scope.selector.css('width'), 10);
+    canvasRect.h = parseInt($scope.selector.css('height'), 10);
+    draw(canvasRect);
+    saveSelection(canvasRect, scale);
+    $scope.selector.trigger('mouseup');
   };
 
   $scope.mouseDown = function ($event) {
-    var canvasOffset = this.canvas.offset();
-    $scope.canvasRect.startX = $event.pageX - canvasOffset.left;
-    $scope.canvasRect.startY = $event.pageY - canvasOffset.top;
+    $scope.isDragging = true;
+  };
+
+  $scope.mouseMove = function ($event) {
+    if($scope.isDragging) {
+      $scope.selector.trigger('mousemove');
+    }
+  };
+
+  function saveSelection(canvasRect, scale) {
+    if(scale == 1) {
+      $scope.selectionArr.push($scope.canvasRect);
+    }
+    else {
+      var tempRect = {};
+      tempRect.startX = canvasRect.startX / scale;
+      tempRect.startY = canvasRect.startY / scale;
+      tempRect.w = canvasRect.w / scale;
+      tempRect.h = canvasRect.h / scale;
+      $scope.selectionArr.push(tempRect);
+    }
   }
 }])
 
@@ -77,18 +97,12 @@ function($scope, pdfDelegate, $timeout) {
       function mouseUp(e) {
         scope.isDragging = false;
         scope.selectorBox.hide();
-        //var offset = scope.canvas.offset();
-        //scope.canvasRect.w = (e.pageX - offset.left) - scope.canvasRect.startX;
-        //scope.canvasRect.h = (e.pageY - offset.top) - scope.canvasRect.startY;
-        //console.log(scope.canvasRect);
         resetSelector();
       }
 
       function mouseDown(e) {
         scope.isDragging = true;
         scope.selectorBox.show();
-        //scope.canvasRect.startX = e.pageX - this.offsetLeft;
-        //scope.canvasRect.startY = e.pageY - this.offsetTop;
         scope.selectRect.x1 = e.pageX;
         scope.selectRect.y1 = e.pageY;
         reCalc();
@@ -100,23 +114,23 @@ function($scope, pdfDelegate, $timeout) {
         reCalc();
       }
 
+      /**
+       * We offset the left and width properties to make sure the selctor is slightly smaller
+       * than where the cursor is, so the mouseUp event is triggered on the canvas first
+       */
       function reCalc() {
         var x3 = Math.min(scope.selectRect.x1, scope.selectRect.x2);
         var x4 = Math.max(scope.selectRect.x1, scope.selectRect.x2);
         var y3 = Math.min(scope.selectRect.y1, scope.selectRect.y2);
         var y4 = Math.max(scope.selectRect.y1, scope.selectRect.y2);
-        scope.selectorBox.css('left', x3 + 'px');
+        scope.selectorBox.css('left', x3 + scope.divMouseUpOffset + 'px');
         scope.selectorBox.css('top', y3 + 'px');
-        scope.selectorBox.css('width', x4 - x3 - scope.divMouseUpOffset + 'px');
+        scope.selectorBox.css('width', x4 - x3 - (scope.divMouseUpOffset * 2) + 'px');
         scope.selectorBox.css('height', y4 - y3 + 'px');
       }
 
       function resetSelector() {
         scope.selectRect = {};
-        scope.selectorBox.css('left', '');
-        scope.selectorBox.css('top', '');
-        scope.selectorBox.css('width', '');
-        scope.selectorBox.css('height', '');
       }
     }
   };
