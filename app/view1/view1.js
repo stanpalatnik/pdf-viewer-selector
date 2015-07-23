@@ -11,9 +11,10 @@ angular.module('myApp.view1', ['ngRoute'])
 
 .controller('View1Ctrl', [
 '$scope',
+'pdfDelegate',
 'canvasSelectorService',
 '$timeout',
-function($scope, canvasSelectorService, $timeout) {
+function($scope, pdfDelegate, canvasSelectorService, $timeout) {
   $scope.pdfUrl = '/app/pdf/contribution_card_cc_eng.pdf';
   $scope.currentPage = 1;
 
@@ -115,8 +116,8 @@ function($scope, canvasSelectorService, $timeout) {
         });
 
         function pageChanged(e) {
-          var page = scope.currentPage = canvasSelectorService.getDelegateHandle().getCurrentPage();
-          var pageSelections = canvasSelectorService.getSelections[page];
+          var page = scope.currentPage = canvasSelectorService.getDelegateInstance().getCurrentPage();
+          var pageSelections = canvasSelectorService.getSelections()[page];
           if(pageSelections !== undefined) {
             pageSelections.forEach(function(selection) {
               canvasSelectorService.draw(selection);

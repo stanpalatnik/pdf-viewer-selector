@@ -4,6 +4,7 @@ angular.module('canvasSelector', [])
     var canvas;
     var selector;
     var delegateHandle = 'my-pdf-container';
+    var delegateInstance = pdfDelegate.$getByHandle(delegateHandle);
     var isDragging = false;
     var selectionArr = [];
 
@@ -11,8 +12,8 @@ angular.module('canvasSelector', [])
         return selectionArr;
     };
 
-    var getDelegateHandle = function() {
-        return delegateHandle;
+    var getDelegateInstance = function() {
+        return delegateInstance;
     };
 
     var getSelectorElem = function(){
@@ -38,8 +39,8 @@ angular.module('canvasSelector', [])
     };
 
     var saveSelection = function(canvasRect) {
-        var page = pdfDelegate.$getByHandle(delegateHandle).getCurrentPage();
-        var scale = pdfDelegate.$getByHandle('my-pdf-container').getCurrentScale();
+        var page = delegateInstance.getCurrentPage();
+        var scale = delegateInstance.getCurrentScale();
         if(selectionArr[page] === undefined) {
             selectionArr[page] = [];
         }
@@ -61,7 +62,7 @@ angular.module('canvasSelector', [])
         calculateSelection: calculateSelection,
         saveSelection: saveSelection,
         getSelections: getSelections,
-        getDelegateHandle: getDelegateHandle,
+        getDelegateInstance: getDelegateInstance,
         getSelectorElem: getSelectorElem
     }
 

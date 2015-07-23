@@ -172,7 +172,13 @@ angular.module('pdf')
                             viewport: viewport
                         };
 
-                        page.render(renderContext);
+                        var pageRendering = page.render(renderContext);
+                        var completeCallback = pageRendering._internalRenderTask.callback;
+                        pageRendering._internalRenderTask.callback = function (error) {
+                            //Step 2: what you want to do before calling the complete method
+                            completeCallback.call(this, error);
+                            $(canvas).trigger('pagechange');
+                        };
                     });
             };
 
@@ -189,7 +195,6 @@ angular.module('pdf')
                     return;
                 currentPage = parseInt(currentPage, 10) - 1;
                 renderPage(currentPage);
-                $(canvas).trigger('pagechange');
             };
 
             self.next = function() {
@@ -197,14 +202,12 @@ angular.module('pdf')
                     return;
                 currentPage = parseInt(currentPage, 10) + 1;
                 renderPage(currentPage);
-                $(canvas).trigger('pagechange');
             };
 
             self.zoomIn = function(amount) {
                 amount = amount || 0.2;
                 scale = parseFloat(scale) + amount;
                 renderPage(currentPage);
-                $(canvas).trigger('scalechange');
                 return scale;
             };
 
@@ -213,7 +216,6 @@ angular.module('pdf')
                 scale = parseFloat(scale) - amount;
                 scale = (scale > 0) ? scale : 0.1;
                 renderPage(currentPage);
-                $(canvas).trigger('scalechange');
                 return scale;
             };
 
@@ -221,7 +223,6 @@ angular.module('pdf')
                 zoomToScale = (zoomToScale) ? zoomToScale : 1.0;
                 scale = parseFloat(zoomToScale);
                 renderPage(currentPage);
-                $(canvas).trigger('scalechange');
                 return scale;
             };
 
