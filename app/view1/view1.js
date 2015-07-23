@@ -11,16 +11,11 @@ angular.module('myApp.view1', ['ngRoute'])
 
 .controller('View1Ctrl', [
 '$scope',
-'pdfDelegate',
+'canvasSelectorService',
 '$timeout',
-function($scope, pdfDelegate, $timeout) {
-  var divMouseUpOffset = 2;
+function($scope, canvasSelectorService, $timeout) {
   $scope.pdfUrl = '/app/pdf/contribution_card_cc_eng.pdf';
-  $scope.canvas = $("#pdfCanvas");
-  $scope.selector = $("#selector-box");
-  $scope.canvasContext = $scope.canvas[0].getContext('2d');
-  $scope.isDragging = false;
-  $scope.selectionArr = [];
+  $scope.currentPage = 1;
 
   $scope.loadNewFile = function(url) {
     pdfDelegate
@@ -28,49 +23,18 @@ function($scope, pdfDelegate, $timeout) {
         .load(url);
   };
 
-  function draw(canvasRect) {
-    $scope.canvasContext.strokeStyle="#e7003a";
-    $scope.canvasContext.strokeRect(canvasRect.startX, canvasRect.startY, canvasRect.w, canvasRect.h);
-    console.log("Current selection: " + canvasRect);
-  }
-
   $scope.mouseUp = function ($event) {
-    $scope.isDragging = false;
-    var offset = this.canvas.offset();
-    var canvasRect = {};
-    var scale = pdfDelegate.$getByHandle('my-pdf-container').getCurrentScale();
-    canvasRect.startX = parseInt($scope.selector.css('left'), 10) - offset.left;
-    canvasRect.startY = parseInt($scope.selector.css('top'), 10) - offset.top;
-    canvasRect.w = parseInt($scope.selector.css('width'), 10);
-    canvasRect.h = parseInt($scope.selector.css('height'), 10);
-    draw(canvasRect);
-    saveSelection(canvasRect, scale);
-    $scope.selector.trigger('mouseup');
+    var canvasRect = canvasSelectorService.calculateSelection();
+    canvasSelectorService.draw(canvasRect);
+    canvasSelectorService.saveSelection(canvasRect);
+    canvasSelectorService.getSelectorElem().trigger('mouseup');
   };
 
   $scope.mouseDown = function ($event) {
-    $scope.isDragging = true;
   };
 
   $scope.mouseMove = function ($event) {
-    if($scope.isDragging) {
-      $scope.selector.trigger('mousemove');
-    }
   };
-
-  function saveSelection(canvasRect, scale) {
-    if(scale == 1) {
-      $scope.selectionArr.push($scope.canvasRect);
-    }
-    else {
-      var tempRect = {};
-      tempRect.startX = canvasRect.startX / scale;
-      tempRect.startY = canvasRect.startY / scale;
-      tempRect.w = canvasRect.w / scale;
-      tempRect.h = canvasRect.h / scale;
-      $scope.selectionArr.push(tempRect);
-    }
-  }
 }])
 
 .directive('canvasSelector', function factory() {
@@ -91,6 +55,7 @@ function($scope, pdfDelegate, $timeout) {
         scope.canvas.on('mousemove', mouseMove);
         scope.selectorBox = $("#selector-box");
         scope.selectorBox.on('mouseup', mouseUp);
+        scope.selectorBox.on('mousemove', mouseMove);
       });
 
 
@@ -134,4 +99,34 @@ function($scope, pdfDelegate, $timeout) {
       }
     }
   };
-});
+})
+.directive("canvasNavigationEvents", [
+  'pdfDelegate',
+  'canvasSelectorService',
+  function(pdfDelegate, canvasSelectorService) {
+    return {
+      restrict: "A",
+      scope: false,
+      link: function(scope, elem, attrs) {
+        $(elem).on('pagechange', pageChanged);
+        $(elem).on('scalechange', scaleChanged);
+        scope.$watch('selectionArr', function(newVal) {
+          console.log(newVal);
+        });
+
+        function pageChanged(e) {
+          var page = scope.currentPage = canvasSelectorService.getDelegateHandle().getCurrentPage();
+          var pageSelections = canvasSelectorService.getSelections[page];
+          if(pageSelections !== undefined) {
+            pageSelections.forEach(function(selection) {
+              canvasSelectorService.draw(selection);
+            });
+          }
+        }
+
+        function scaleChanged(e) {
+
+        }
+      }
+    }
+  }]);

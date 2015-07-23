@@ -4,6 +4,7 @@
 angular.module('myApp', [
   'pdf',
   'ngRoute',
+  'canvasSelector',
   'myApp.view1',
   'myApp.view2',
   'myApp.version'

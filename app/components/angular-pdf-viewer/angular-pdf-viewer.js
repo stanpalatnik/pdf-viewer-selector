@@ -189,6 +189,7 @@ angular.module('pdf')
                     return;
                 currentPage = parseInt(currentPage, 10) - 1;
                 renderPage(currentPage);
+                $(canvas).trigger('pagechange');
             };
 
             self.next = function() {
@@ -196,12 +197,14 @@ angular.module('pdf')
                     return;
                 currentPage = parseInt(currentPage, 10) + 1;
                 renderPage(currentPage);
+                $(canvas).trigger('pagechange');
             };
 
             self.zoomIn = function(amount) {
                 amount = amount || 0.2;
                 scale = parseFloat(scale) + amount;
                 renderPage(currentPage);
+                $(canvas).trigger('scalechange');
                 return scale;
             };
 
@@ -210,6 +213,7 @@ angular.module('pdf')
                 scale = parseFloat(scale) - amount;
                 scale = (scale > 0) ? scale : 0.1;
                 renderPage(currentPage);
+                $(canvas).trigger('scalechange');
                 return scale;
             };
 
@@ -217,6 +221,7 @@ angular.module('pdf')
                 zoomToScale = (zoomToScale) ? zoomToScale : 1.0;
                 scale = parseFloat(zoomToScale);
                 renderPage(currentPage);
+                $(canvas).trigger('scalechange');
                 return scale;
             };
 
@@ -246,7 +251,7 @@ angular.module('pdf')
             };
 
             self.goToPage = function(newVal) {
-                if (pdfDoc !== null) {
+                if (pdfDoc !== null && newVal != currentPage && newVal <= $scope.pageCount && !isNaN(parseInt(newVal))) {
                     currentPage = newVal;
                     renderPage(newVal);
                 }
