@@ -117,9 +117,14 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
 
         function pageChanged(e) {
           var page = scope.currentPage = canvasSelectorService.getDelegateInstance().getCurrentPage();
+          var scale = canvasSelectorService.getDelegateInstance().getCurrentScale();
           var pageSelections = canvasSelectorService.getSelections()[page];
           if(pageSelections !== undefined) {
             pageSelections.forEach(function(selection) {
+              selection.startX = selection.startX * scale;
+              selection.startY = selection.startY * scale;
+              selection.w = selection.w * scale;
+              selection.h = selection.h * scale;
               canvasSelectorService.draw(selection);
             });
           }

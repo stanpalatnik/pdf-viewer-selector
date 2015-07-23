@@ -4,6 +4,7 @@ angular.module('canvasSelector', [])
     var canvas;
     var selector;
     var delegateHandle = 'my-pdf-container';
+    var strokeStyle = "#e7003a";
     var delegateInstance = pdfDelegate.$getByHandle(delegateHandle);
     var isDragging = false;
     var selectionArr = [];
@@ -21,7 +22,7 @@ angular.module('canvasSelector', [])
     };
 
     var draw = function(canvasRect) {
-        canvas[0].getContext('2d').strokeStyle="#e7003a";
+        canvas[0].getContext('2d').strokeStyle=strokeStyle;
         canvas[0].getContext('2d').strokeRect(canvasRect.startX, canvasRect.startY, canvasRect.w, canvasRect.h);
         console.log(JSON.stringify(canvasRect, null, 4));
     };
