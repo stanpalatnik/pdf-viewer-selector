@@ -24,6 +24,12 @@
                            class="button button-narrow button-nav-light">
                             Load the Contribution card PDF
                         </a>
+                        <hovercard hover-tmpl-url="/app/view2/view2.html">Hover over here</hovercard>.
+                        <ul>
+                            <li data-ng-repeat="selection in selections">
+                                <h3>{{ selection.startX }}</h3>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -31,14 +37,3 @@
         <canvas-selector canvas-elem="'#pdfCanvas'"></canvas-selector>
     </div>
 </div>
-<script type="text/javascript">
-    $( document ).ready(function() {
-        var canvas = $("#pdfCanvas");
-        alert(canvas);
-        alert(mouseDown)
-        canvas.on('mousedown', function(e) {
-            alert('f');
-        });
-        canvas.on('mouseup', mouseUp);
-    });
-</script>

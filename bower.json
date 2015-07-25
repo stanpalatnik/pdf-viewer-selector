@@ -12,6 +12,7 @@
     "angular-mocks": "~1.4.0",
     "html5-boilerplate": "~5.2.0",
     "pdfjs-dist": "~1.0.925",
-    "jquery": "~2.1.4"
+    "jquery": "~2.1.4",
+    "angular-hovercard": "~1.0.4"
   }
 }
