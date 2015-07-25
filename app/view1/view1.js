@@ -127,11 +127,12 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
           scope.selections = canvasSelectorService.getCurrent().selections;
           var scale = canvasSelectorService.getDelegateInstance().getCurrentScale();
           scope.selections.forEach(function(selection) {
-            selection.startX = selection.startX * scale;
-            selection.startY = selection.startY * scale;
-            selection.w = selection.w * scale;
-            selection.h = selection.h * scale;
-            canvasSelectorService.draw(selection);
+            var tmpSelection = {};
+            tmpSelection.startX = selection.startX * scale;
+            tmpSelection.startY = selection.startY * scale;
+            tmpSelection.w = selection.w * scale;
+            tmpSelection.h = selection.h * scale;
+            canvasSelectorService.draw(tmpSelection);
           });
         }
 
