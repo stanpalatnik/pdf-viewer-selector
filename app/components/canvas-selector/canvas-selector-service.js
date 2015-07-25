@@ -7,10 +7,35 @@ angular.module('canvasSelector', [])
     var strokeStyle = "#e7003a";
     var delegateInstance = pdfDelegate.$getByHandle(delegateHandle);
     var isDragging = false;
-    var selectionArr = [];
+    var selections = [];
+    var current = {
+        selections: []
+    };
+
+    var registerCanvas = function(canvasElem) {
+        canvas = $(canvasElem);
+        $(canvas).on('pagechange', function(){
+            console.log('page change inside of service!');
+        });
+    };
+
+    var registerSelector = function(selectorElem) {
+        selector = $(selectorElem);
+    };
+
 
     var getSelections = function() {
-        return selectionArr;
+        return selections;
+    };
+
+    var getCurrentPageSelections = function() {
+        var currentPage = delegateInstance.getCurrentPage();
+        var currentSelections = selections[currentPage];
+        if(currentSelections === undefined) {
+            selections[currentPage] = [];
+            currentSelections = selections[currentPage];
+        }
+        return currentSelections;
     };
 
     var getDelegateInstance = function() {
@@ -28,8 +53,6 @@ angular.module('canvasSelector', [])
     };
 
     var calculateSelection = function() {
-        canvas = canvas || $("#pdfCanvas");
-        selector = selector || $("#selector-box");
         var offset = canvas.offset();
         var canvasRect = {};
         canvasRect.startX = parseInt(selector.css('left'), 10) - offset.left;
@@ -42,11 +65,11 @@ angular.module('canvasSelector', [])
     var saveSelection = function(canvasRect) {
         var page = delegateInstance.getCurrentPage();
         var scale = delegateInstance.getCurrentScale();
-        if(selectionArr[page] === undefined) {
-            selectionArr[page] = [];
+        if(selections[page] === undefined) {
+            selections[page] = [];
         }
         if(scale == 1) {
-            selectionArr[page].push(canvasRect);
+            selections[page].push(canvasRect);
         }
         else {
             var tempRect = {};
@@ -54,8 +77,12 @@ angular.module('canvasSelector', [])
             tempRect.startY = canvasRect.startY / scale;
             tempRect.w = canvasRect.w / scale;
             tempRect.h = canvasRect.h / scale;
-            selectionArr[page].push(tempRect);
+            selections[page].push(tempRect);
         }
+    };
+
+    var getCurrent = function() {
+        return current;
     };
 
     return {
@@ -64,7 +91,11 @@ angular.module('canvasSelector', [])
         saveSelection: saveSelection,
         getSelections: getSelections,
         getDelegateInstance: getDelegateInstance,
-        getSelectorElem: getSelectorElem
+        getSelectorElem: getSelectorElem,
+        getCurrentPageSelections: getCurrentPageSelections,
+        getCurrent: getCurrent,
+        registerCanvas: registerCanvas,
+        registerSelector: registerSelector
     }
 
 }]);

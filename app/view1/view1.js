@@ -16,7 +16,7 @@ angular.module('myApp.view1', ['ngRoute'])
 '$timeout',
 function($scope, pdfDelegate, canvasSelectorService, $timeout) {
   $scope.pdfUrl = '/app/pdf/contribution_card_cc_eng.pdf';
-  $scope.currentPage = 1;
+  $scope.current = canvasSelectorService.getCurrent();
 
   $scope.loadNewFile = function(url) {
     pdfDelegate
@@ -25,6 +25,8 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
   };
 
   $scope.mouseUp = function ($event) {
+    console.log($scope.current.selections);
+    console.log($scope.current.page);
     var canvasRect = canvasSelectorService.calculateSelection();
     if(canvasRect.w < 5 || canvasRect.h < 5) {
       console.log("Too small");
@@ -43,8 +45,10 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
   };
 }])
 
-.directive('canvasSelector', function factory() {
-  return {
+.directive('canvasSelector', [
+  'canvasSelectorService',
+  function(canvasSelectorService) {
+    return {
     restrict: 'E',
     replace: true,
     template: '<div id="selector-box" hidden></div>',
@@ -62,6 +66,8 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
         scope.selectorBox = $("#selector-box");
         scope.selectorBox.on('mouseup', mouseUp);
         scope.selectorBox.on('mousemove', mouseMove);
+        canvasSelectorService.registerCanvas(scope.canvasElem);
+        canvasSelectorService.registerSelector("#selector-box");
       });
 
 
@@ -104,8 +110,8 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
         scope.selectRect = {};
       }
     }
-  };
-})
+  }
+}])
 .directive("canvasNavigationEvents", [
   'pdfDelegate',
   'canvasSelectorService',
@@ -116,24 +122,17 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
       link: function(scope, elem, attrs) {
         $(elem).on('pagechange', pageChanged);
         $(elem).on('scalechange', scaleChanged);
-        scope.$watch('selectionArr', function(newVal) {
-          console.log(newVal);
-        });
 
         function pageChanged(e) {
-          var page = scope.currentPage = canvasSelectorService.getDelegateInstance().getCurrentPage();
+          scope.selections = canvasSelectorService.getCurrent().selections;
           var scale = canvasSelectorService.getDelegateInstance().getCurrentScale();
-          var pageSelections = canvasSelectorService.getSelections()[page];
-          if(pageSelections !== undefined) {
-            pageSelections.forEach(function(selection) {
-              var tmpSelection = {};
-              tmpSelection.startX = selection.startX * scale;
-              tmpSelection.startY = selection.startY * scale;
-              tmpSelection.w = selection.w * scale;
-              tmpSelection.h = selection.h * scale;
-              canvasSelectorService.draw(tmpSelection);
-            });
-          }
+          scope.selections.forEach(function(selection) {
+            selection.startX = selection.startX * scale;
+            selection.startY = selection.startY * scale;
+            selection.w = selection.w * scale;
+            selection.h = selection.h * scale;
+            canvasSelectorService.draw(selection);
+          });
         }
 
         function scaleChanged(e) {
