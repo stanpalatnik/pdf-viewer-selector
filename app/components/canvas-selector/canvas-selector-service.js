@@ -14,8 +14,8 @@ angular.module('canvasSelector', [])
 
     var registerCanvas = function(canvasElem) {
         canvas = $(canvasElem);
-        $(canvas).on('pagechange', function(){
-            console.log('page change inside of service!');
+        $(canvas).on('pagechange', function() {
+            current.selections = getCurrentPageSelections();
         });
     };
 

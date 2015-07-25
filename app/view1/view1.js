@@ -26,7 +26,6 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
 
   $scope.mouseUp = function ($event) {
     console.log($scope.current.selections);
-    console.log($scope.current.page);
     var canvasRect = canvasSelectorService.calculateSelection();
     if(canvasRect.w < 5 || canvasRect.h < 5) {
       console.log("Too small");
