@@ -26,8 +26,13 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
 
   $scope.mouseUp = function ($event) {
     var canvasRect = canvasSelectorService.calculateSelection();
-    canvasSelectorService.draw(canvasRect);
-    canvasSelectorService.saveSelection(canvasRect);
+    if(canvasRect.w < 5 || canvasRect.h < 5) {
+      console.log("Too small");
+    }
+    else {
+      canvasSelectorService.draw(canvasRect);
+      canvasSelectorService.saveSelection(canvasRect);
+    }
     canvasSelectorService.getSelectorElem().trigger('mouseup');
   };
 
@@ -121,11 +126,12 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
           var pageSelections = canvasSelectorService.getSelections()[page];
           if(pageSelections !== undefined) {
             pageSelections.forEach(function(selection) {
-              selection.startX = selection.startX * scale;
-              selection.startY = selection.startY * scale;
-              selection.w = selection.w * scale;
-              selection.h = selection.h * scale;
-              canvasSelectorService.draw(selection);
+              var tmpSelection = {};
+              tmpSelection.startX = selection.startX * scale;
+              tmpSelection.startY = selection.startY * scale;
+              tmpSelection.w = selection.w * scale;
+              tmpSelection.h = selection.h * scale;
+              canvasSelectorService.draw(tmpSelection);
             });
           }
         }
