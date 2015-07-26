@@ -33,3 +33,11 @@
   border: 1px dotted #000;
   position: absolute;
 }
+
+.hovercard-holder {
+  position: absolute;
+}
+
+.angular-hovercard-detail {
+  width: 200px;
+}

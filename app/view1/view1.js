@@ -25,7 +25,7 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
   };
 
   $scope.mouseUp = function ($event) {
-    console.log($scope.current.selections);
+    console.log($scope.current.offset);
     var canvasRect = canvasSelectorService.calculateSelection();
     if(canvasRect.w < 5 || canvasRect.h < 5) {
       console.log("Too small");
@@ -67,8 +67,32 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
         scope.selectorBox.on('mousemove', mouseMove);
         canvasSelectorService.registerCanvas(scope.canvasElem);
         canvasSelectorService.registerSelector("#selector-box");
+
+        $(scope.canvas).on('pagechange', pageChanged);
+        $(scope.canvas).on('scalechange', scaleChanged);
       });
 
+      function pageChanged(e) {
+        scope.selections = canvasSelectorService.getCurrent().selections;
+        var scale = canvasSelectorService.getDelegateInstance().getCurrentScale();
+        scope.selections.forEach(function(selection) {
+          var scaledSelection = {};
+          scaledSelection.startX = selection.startX * scale;
+          scaledSelection.startY = selection.startY * scale;
+          scaledSelection.w = selection.w * scale;
+          scaledSelection.h = selection.h * scale;
+
+          selection.scaledStartX = scaledSelection.startX;
+          selection.scaledStartY = scaledSelection.startY;
+          selection.scaledW = scaledSelection.w;
+          selection.scaledH = scaledSelection.h;
+          canvasSelectorService.draw(scaledSelection);
+        });
+      }
+
+      function scaleChanged(e) {
+
+      }
 
       function mouseUp(e) {
         scope.isDragging = false;
@@ -110,34 +134,4 @@ function($scope, pdfDelegate, canvasSelectorService, $timeout) {
       }
     }
   }
-}])
-.directive("canvasNavigationEvents", [
-  'pdfDelegate',
-  'canvasSelectorService',
-  function(pdfDelegate, canvasSelectorService) {
-    return {
-      restrict: "A",
-      scope: false,
-      link: function(scope, elem, attrs) {
-        $(elem).on('pagechange', pageChanged);
-        $(elem).on('scalechange', scaleChanged);
-
-        function pageChanged(e) {
-          scope.selections = canvasSelectorService.getCurrent().selections;
-          var scale = canvasSelectorService.getDelegateInstance().getCurrentScale();
-          scope.selections.forEach(function(selection) {
-            var tmpSelection = {};
-            tmpSelection.startX = selection.startX * scale;
-            tmpSelection.startY = selection.startY * scale;
-            tmpSelection.w = selection.w * scale;
-            tmpSelection.h = selection.h * scale;
-            canvasSelectorService.draw(tmpSelection);
-          });
-        }
-
-        function scaleChanged(e) {
-
-        }
-      }
-    }
-  }]);
+}]);

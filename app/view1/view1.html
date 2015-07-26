@@ -5,8 +5,8 @@
                 delegate-handle="my-pdf-container"
                 url="pdfUrl"
                 scale="1"
-                show-toolbar="true"
-                canvas-navigation-events></pdf-viewer>
+                show-toolbar="true">
+        </pdf-viewer>
 
         <footer class="py4">
             <div class="sm-table">
@@ -24,12 +24,11 @@
                            class="button button-narrow button-nav-light">
                             Load the Contribution card PDF
                         </a>
-                        <hovercard hover-tmpl-url="/app/view2/view2.html">Hover over here</hovercard>.
-                        <ul>
-                            <li data-ng-repeat="selection in selections">
-                                <h3>{{ selection.startX }}</h3>
-                            </li>
-                        </ul>
+                            <div class="hovercard-holder" data-ng-repeat="selection in current.selections" style="left: {{selection.scaledStartX + current.offset.left}}px; top: {{selection.scaledStartY + current.offset.top}}px">
+                                <hovercard hover-tmpl-url="/app/view2/view2.html">
+                                    <div id="{{selection.scaledStartX}}" style="width: {{selection.scaledW}}px; height: {{selection.scaledH}}px"></div>
+                                </hovercard>
+                            </div>
                     </div>
                 </div>
             </div>

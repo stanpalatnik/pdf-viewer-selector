@@ -9,13 +9,16 @@ angular.module('canvasSelector', [])
     var isDragging = false;
     var selections = [];
     var current = {
-        selections: []
+        selections: [],
+        offset: {}
     };
 
     var registerCanvas = function(canvasElem) {
         canvas = $(canvasElem);
+        current.offset = canvas.offset();
         $(canvas).on('pagechange', function() {
             current.selections = getCurrentPageSelections();
+            current.offset = canvas.offset();
         });
     };
 
@@ -53,10 +56,9 @@ angular.module('canvasSelector', [])
     };
 
     var calculateSelection = function() {
-        var offset = canvas.offset();
         var canvasRect = {};
-        canvasRect.startX = parseInt(selector.css('left'), 10) - offset.left;
-        canvasRect.startY = parseInt(selector.css('top'), 10) - offset.top;
+        canvasRect.startX = parseInt(selector.css('left'), 10) - current.offset.left;
+        canvasRect.startY = parseInt(selector.css('top'), 10) - current.offset.top;
         canvasRect.w = parseInt(selector.css('width'), 10);
         canvasRect.h = parseInt(selector.css('height'), 10);
         return canvasRect;
@@ -69,6 +71,10 @@ angular.module('canvasSelector', [])
             selections[page] = [];
         }
         if(scale == 1) {
+            canvasRect.scaledStartX = canvasRect.startX;
+            canvasRect.scaledStartY = canvasRect.startY;
+            canvasRect.scaledW = canvasRect.w;
+            canvasRect.scaledH = canvasRect.h;
             selections[page].push(canvasRect);
         }
         else {
@@ -77,6 +83,11 @@ angular.module('canvasSelector', [])
             tempRect.startY = canvasRect.startY / scale;
             tempRect.w = canvasRect.w / scale;
             tempRect.h = canvasRect.h / scale;
+
+            tempRect.scaledStartX = canvasRect.startX;
+            tempRect.scaledStartY = canvasRect.startY;
+            tempRect.scaledW = canvasRect.w;
+            tempRect.scaledH = canvasRect.h;
             selections[page].push(tempRect);
         }
     };
