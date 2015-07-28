@@ -71,6 +71,7 @@ angular.module('canvasSelector', [])
             selections[page] = [];
         }
         if(scale == 1) {
+            canvasRect.id = generateId();
             canvasRect.scaledStartX = canvasRect.startX;
             canvasRect.scaledStartY = canvasRect.startY;
             canvasRect.scaledW = canvasRect.w;
@@ -79,6 +80,7 @@ angular.module('canvasSelector', [])
         }
         else {
             var tempRect = {};
+            tempRect.id = generateId();
             tempRect.startX = canvasRect.startX / scale;
             tempRect.startY = canvasRect.startY / scale;
             tempRect.w = canvasRect.w / scale;
@@ -92,9 +94,29 @@ angular.module('canvasSelector', [])
         }
     };
 
+    var deleteCurrentSelection = function(id){
+        var currentPage = delegateInstance.getCurrentPage();
+        selections[currentPage] = selections[currentPage].
+            filter(function(selection) {
+                        return selection.id != id;
+            });
+        //current.selections = getCurrentPageSelections();
+        console.log(selections[currentPage]);
+    };
+
     var getCurrent = function() {
         return current;
     };
+
+    function generateId()
+    {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for( var i=0; i < 10; i++ )
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text;
+    }
 
     return {
         draw: draw,
@@ -106,7 +128,8 @@ angular.module('canvasSelector', [])
         getCurrentPageSelections: getCurrentPageSelections,
         getCurrent: getCurrent,
         registerCanvas: registerCanvas,
-        registerSelector: registerSelector
+        registerSelector: registerSelector,
+        deleteCurrentSelection: deleteCurrentSelection
     }
 
 }]);

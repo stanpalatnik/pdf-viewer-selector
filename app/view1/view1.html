@@ -24,9 +24,9 @@
                            class="button button-narrow button-nav-light">
                             Load the Contribution card PDF
                         </a>
-                            <div class="hovercard-holder" data-ng-repeat="selection in current.selections" style="left: {{selection.scaledStartX + current.offset.left}}px; top: {{selection.scaledStartY + current.offset.top}}px">
-                                <hovercard hover-tmpl-url="/app/view2/view2.html">
-                                    <div id="{{selection.scaledStartX}}" style="width: {{selection.scaledW}}px; height: {{selection.scaledH}}px"></div>
+                            <div class="hovercard-holder" data-ng-repeat="selection in current.selections" selection-id="{{selection.id}}" style="left: {{selection.scaledStartX + current.offset.left}}px; top: {{selection.scaledStartY + current.offset.top}}px">
+                                <hovercard hover-tmpl-url="selector_actions/selector_actions_holder.html">
+                                    <div style="width: {{selection.scaledW}}px; height: {{selection.scaledH}}px"></div>
                                 </hovercard>
                             </div>
                     </div>

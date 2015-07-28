@@ -7,6 +7,7 @@ angular.module('myApp', [
   'canvasSelector',
   'myApp.view1',
   'myApp.view2',
+  'myApp.selectorActions',
   'myApp.version',
   'yaru22.hovercard'
 ]).config(['$routeProvider', function($routeProvider) {

@@ -129,6 +129,7 @@ angular.module('pdf', [])
         'getCurrentPage',
         'getCurrentScale',
         'goToPage',
+        'reloadPage',
         'load'
     ]));
 angular.module('pdf')
@@ -256,6 +257,10 @@ angular.module('pdf')
                     currentPage = newVal;
                     renderPage(newVal);
                 }
+            };
+
+            self.reloadPage = function() {
+                renderPage(currentPage);
             };
 
             self.load = function(_url) {
